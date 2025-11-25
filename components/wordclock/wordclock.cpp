@@ -100,6 +100,8 @@ void Wordclock::loop() {
   int h = time.hour;
   int m = time.minute;
   int s = time.second;
+  int day = time.day_of_month;
+  int month = time.month;
 
   // Convert float 0.0 till 1.0 into int 0 till 255
   red_ = (int)(red_value * 255);
@@ -155,13 +157,43 @@ void Wordclock::loop() {
     strip_.SetPixelColor(0, RgbColor(0, 0, 255)); strip_.Show(); delay(250);
     strip_.SetPixelColor(0, RgbColor(0, 0, 0));   strip_.Show();
   } else {
-    if (h != hour_ || m != minute_ || change_ || time_mode != tm_) {
+    bool show_date_enabled = showdate_ ? showdate_->state : false;
+    
+    if (s == 50 && !show_date_ && show_date_enabled) {
+      show_date_ = true;
+    } else if (s == 54 && show_date_) {
+      change_ = true;
+      show_date_ = false;
+    }
+
+    // Only update once in a minute or on change
+    if (h != hour_ || m != minute_ || change_ || time_mode != tm_ || 
+        (show_date_ && (s != second_ || change_))) {
       hour_ = h;
       minute_ = m;
       second_ = s;
       change_ = false;
       tm_ = time_mode;
-      if (hour_ >= 0) {
+
+      if (show_date_) {
+        start_fade();
+        for (int i = 0; i < PixelCount; i++) {
+          new_colors_[i] = RgbColor(0, 0, 0);
+        }
+        for (int i = 0; i < 17; i++) {
+          if (s == 50 || s == 51) {
+            if (cijfer_links_[day / 10][i] >= 0)
+              new_colors_[cijfer_links_[day / 10][i]] = color_;
+            if (cijfer_rechts_[day % 10][i] >= 0)
+              new_colors_[cijfer_rechts_[day % 10][i]] = color_;
+          } else if (s == 52 || s == 53) {
+            if (cijfer_links_[month / 10][i] >= 0)
+              new_colors_[cijfer_links_[month / 10][i]] = color_;
+            if (cijfer_rechts_[month % 10][i] >= 0)
+              new_colors_[cijfer_rechts_[month % 10][i]] = color_;
+          }
+        }
+      } else if (hour_ >= 0) {
         start_fade();
         for (int i = 0; i < PixelCount; i++) {
           new_colors_[i] = RgbColor(0, 0, 0);

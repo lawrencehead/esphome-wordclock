@@ -23,6 +23,7 @@ class Wordclock : public Component {
   void set_light(light::LightState *light) { light_ = light; }
   void set_time(time::RealTimeClock *time) { time_ = time; }
   void set_timemodus(select::Select *timemodus) { timemodus_ = timemodus; }
+  void set_showdate(switch_::Switch *showdate) { showdate_ = showdate; }
   void set_colorcycle(switch_::Switch *colorcycle) { colorcycle_ = colorcycle; }
   void set_ccspeed(number::Number *ccspeed) { ccspeed_ = ccspeed; }
 
@@ -34,6 +35,7 @@ class Wordclock : public Component {
   light::LightState *light_{nullptr};
   time::RealTimeClock *time_{nullptr};
   select::Select *timemodus_{nullptr};
+  switch_::Switch *showdate_{nullptr};
   switch_::Switch *colorcycle_{nullptr};
   number::Number *ccspeed_{nullptr};
 
@@ -73,6 +75,32 @@ class Wordclock : public Component {
     { 59,  60,  61,  62,  63,  64} // twelve (12 hrs)
   };
 
+  int cijfer_links_[10][17] = {
+    {110, 109, 108, 107, 106, 101,  95,  90,  84,  81,  75,  69,  68,  67,  66,  65,  -1},
+    {101,  96,  90,  89,  88,  87,  86,  85,  84,  81,  -1,  -1,  -1,  -1,  -1,  -1,  -1},
+    {110, 105, 101, 100,  95,  90,  86,  84,  81,  78,  75,  69,  68,  64,  -1,  -1,  -1},
+    {111, 105, 101,  98,  95,  90,  87,  84,  81,  78,  75,  69,  68,  66,  65,  -1,  -1},
+    {111, 110, 109, 108,  98,  87,  78,  70,  69,  68,  67,  66,  65,  64,  -1,  -1,  -1},
+    {111, 110, 109, 108, 105, 101,  98,  95,  90,  87,  84,  81,  78,  75,  70,  66,  65},
+    {110, 109, 108, 107, 106, 101,  98,  95,  90,  87,  84,  81,  78,  75,  66,  65,  -1},
+    {111,  95,  90,  86,  85,  84,  78,  75,  70,  69,  68,  -1,  -1,  -1,  -1,  -1,  -1},
+    {110, 109, 107, 106, 101,  98,  95,  90,  87,  84,  81,  78,  75,  69,  68,  66,  65},
+    {110, 109, 106, 101,  98,  95,  90,  87,  84,  81,  78,  75,  69,  68,  67,  66,  65}
+  };
+
+  int cijfer_rechts_[10][17] = {
+    { 49,  48,  47,  46,  45,  41,  35,  30,  24,  21,  15,  8,   7,    6,   5,   4,  -1},
+    { 41,  36,  30,  29,  28,  27,  26,  25,  24,  21,  -1,  -1, -1,   -1,  -1,  -1,  -1},
+    { 49,  45,  44,  41,  39,  35,  30,  27,  24,  21,  17,  15,  8,    3,  -1,  -1,  -1},
+    { 50,  44,  41,  38,  35,  30,  27,  24,  21,  18,  15,   8,  7,    5,   4,  -1,  -1},
+    { 50,  49,  48,  47,  38,  27,  18,   9,   8,   7,   6,   5,  4,    3,  -1,  -1,  -1},
+    { 50,  49,  48,  47,  44,  41,  38,  35,  30,  27,  24,  21,  18,  15,   9,   5,   4},
+    { 49,  48,  47,  46,  45,  41,  38,  35,  30,  27,  24,  21,  18,  15,   5,   4,  -1},
+    { 50,  35,  30,  26,  25,  24,  18,  15,  9,    8,   7,  -1,  -1,  -1,  -1,  -1,  -1},
+    { 49,  48,  46,  45,  41,  38,  35,  30,  27,  24,  21,  18,  15,   8,   7,   5,   4},
+    { 49,  48,  45,  41,  38,  35,  30,  27,  24,  21,  18,  15,   8,   7,   6,   5,   4}
+  };
+
   // State variables
   int hour_{-1};
   int minute_{-1};
@@ -86,6 +114,7 @@ class Wordclock : public Component {
   int brightness_{50};
   int brightness2_;
   bool change_{false};
+  bool show_date_{false};
   int hue_{0};
   int counter_{0};
   std::string tm_;

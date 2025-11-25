@@ -7,6 +7,15 @@ packages:
   - !include common/common.yaml # esphome, wifi, api, ota, logger
   - !include common/common_sensors.yaml # Wifi info, esphome ver, uptime, restart button
 
+esphome:
+  #includes:
+  #  - wordclock.h
+  on_boot:
+    priority: 800
+    then:
+      - light.turn_on: 
+          id: neopixelbuslight
+
 esp32:
   board: esp32dev
   framework:
@@ -18,17 +27,24 @@ light:
     type: GRB
     variant: ws2812X
     pin: 23
-    restore_mode: ALWAYS_ON
+    restore_mode: RESTORE_DEFAULT_ON
     num_leds: 113
     name: Light
 
 switch:
   - platform: template
+    name: ${friendly_name} show date
+    icon: mdi:calendar-month
+    optimistic: true
+    id: showdate
+    internal: true
+    restore_mode: ALWAYS_OFF
+  - platform: template
     name: Colour cycle
     icon: mdi:palette
     optimistic: true
     id: colorcycle  
-    restore_mode: ALWAYS_ON
+    restore_mode: RESTORE_DEFAULT_ON
 
 select:
   - platform: template
@@ -67,5 +83,6 @@ wordclock:
   light_id: neopixelbuslight
   time_id: current_time
   timemodus_id: timemodus
+  showdate_id: showdate
   colorcycle_id: colorcycle
   ccspeed_id: ccspeed
