@@ -1,0 +1,71 @@
+substitutions:
+  name: wordclock
+  friendly_name: "Wordclock"
+  comment: "ESP32 / WS2812 wordclock"
+
+packages:
+  - !include common/common.yaml # esphome, wifi, api, ota, logger
+  - !include common/common_sensors.yaml # Wifi info, esphome ver, uptime, restart button
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+light:
+  - platform: neopixelbus
+    id: neopixelbuslight
+    type: GRB
+    variant: ws2812X
+    pin: 23
+    restore_mode: ALWAYS_ON
+    num_leds: 113
+    name: Light
+
+switch:
+  - platform: template
+    name: Colour cycle
+    icon: mdi:palette
+    optimistic: true
+    id: colorcycle  
+    restore_mode: ALWAYS_ON
+
+select:
+  - platform: template
+    name: ${friendly_name} time modus
+    optimistic: true
+    internal: true
+    options:
+      - Minutes-plus
+      - Minutes-min
+    initial_option: Minutes-plus
+    id: timemodus
+    
+number:
+  - platform: template
+    name: Colour cycle speed
+    optimistic: true
+    #restore_value: on
+    initial_value: 1
+    min_value: 0
+    max_value: 100
+    step: 1
+    id: ccspeed
+
+time:
+  - platform: homeassistant
+    id: current_time
+
+external_components:
+  - source:
+      type: local
+      path: components  # or use github URL for published version
+    components: [ wordclock ]
+
+wordclock:
+  id: my_wordclock
+  light_id: neopixelbuslight
+  time_id: current_time
+  timemodus_id: timemodus
+  colorcycle_id: colorcycle
+  ccspeed_id: ccspeed
