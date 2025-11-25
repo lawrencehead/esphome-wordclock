@@ -1,0 +1,22 @@
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP address
+      id: common_sensor_ip_address
+      icon: mdi:ip-network
+  - platform: version
+    id: common_sensor_esphome_version
+    name: "ESPHome Version"
+    hide_timestamp: true
+    icon: mdi:chip
+
+sensor:
+  - platform: uptime
+    id: common_sensor_uptime
+    type: seconds
+    name: Uptime
+
+button:
+  - platform: restart
+    id: common_button_restart
+    name: Restart
