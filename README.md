@@ -2,7 +2,7 @@
 ## General
 ESPhome wordclock based on [jeroen85's version](https://github.com/jeroen85/ha-wordclock-esphome), but updated to be used as an external component within ESPhome, instead of a custom component.
 
-I've adapted it from being a custom component to an external component since the removal of custom components back in 2025.6.  It's now running just fine on 2025.11.0.  Claude.ai did most of the work in adapting it, and for the original code credit goes to [leinich](https://github.com/leinich/ha-wordclock-esphome) and [jeroen85](https://github.com/jeroen85/ha-wordclock-esphome).  Time is still pulled from Home Assistant.
+I've adapted it from being a custom component to an external component since the removal of custom components back in 2025.2.  It's now running just fine on 2025.11.0.  Claude.ai did most of the work in adapting it, and for the original code credit goes to [leinich](https://github.com/leinich/ha-wordclock-esphome) and [jeroen85](https://github.com/jeroen85/ha-wordclock-esphome).  Time is still pulled from Home Assistant.
 
 I've also added a fade on/off for the LEDs as the time changes.
 
